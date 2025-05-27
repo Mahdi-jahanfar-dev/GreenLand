@@ -1,13 +1,23 @@
 from django.db import models
+from .choices import ZoneStatus, UserRole
+from Account.models import CustomUser
 
 
-class ZoneStatus(models.IntegerChoices):
-    good = 1
-    normal = 2
-    bad = 3
 
+class GreenLand(models.Model):
+    name = models.CharField(max_length=200)
+    owner = models.ForeignKey(CustomUser,on_delete=models.CASCADE ,related_name='green_land')
+
+    def __str__(self):
+        return self.name
+
+class SetRole(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE)
+    role = models.IntegerField(choices=UserRole.choices)
 
 class Zone(models.Model):
+    greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE, related_name='zones', null=True, blank=True)
     name = models.CharField(max_length=200)
     status = models.IntegerField(choices=ZoneStatus.choices)
     temperature = models.IntegerField()
