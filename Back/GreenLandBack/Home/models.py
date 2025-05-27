@@ -17,3 +17,7 @@ class Zone(models.Model):
     smoke = models.IntegerField(choices=ZoneStatus)
     lastUpdate = models.DateTimeField(auto_now_add=True)
     image = models.ImageField()
+
+
+    def __str__(self):
+        return self.name
