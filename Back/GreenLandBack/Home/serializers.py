@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Zone
+from .models import Zone, GreenLand
 
 
 
@@ -16,3 +16,9 @@ class ZoneSerializer(serializers.ModelSerializer):
                   'smoke',
                   'lastUpdate',
                   'image']
+        
+
+class GrenlandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GreenLand
+        fields = ['name', 'owner']
