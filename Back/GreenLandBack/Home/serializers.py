@@ -6,4 +6,13 @@ from .models import Zone
 class ZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zone
-        fields = '__all__'
+        fields = ['greenland',
+                  'name',
+                  'status',
+                  'temperature',
+                  'humidity',
+                  'light',
+                  'solidMoisture',
+                  'smoke',
+                  'lastUpdate',
+                  'image']

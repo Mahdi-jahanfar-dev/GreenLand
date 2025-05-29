@@ -17,7 +17,7 @@ class SetRole(models.Model):
     role = models.IntegerField(choices=UserRole.choices)
 
 class Zone(models.Model):
-    greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE, related_name='zones', null=True, blank=True)
+    greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE, related_name='zones')
     name = models.CharField(max_length=200)
     status = models.IntegerField(choices=ZoneStatus.choices)
     temperature = models.IntegerField()
