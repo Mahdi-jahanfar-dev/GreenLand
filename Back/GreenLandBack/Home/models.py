@@ -12,7 +12,7 @@ class GreenLand(models.Model):
         return self.name
 
 class SetRole(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='role')
     greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE)
     role = models.CharField(choices=UserRole.choices)
 
@@ -24,7 +24,7 @@ class Zone(models.Model):
     humidity = models.IntegerField()
     light = models.IntegerField()
     solidMoisture = models.IntegerField()
-    smoke = models.IntegerField(choices=ZoneStatus)
+    smoke = models.CharField(choices=ZoneStatus)
     lastUpdate = models.DateTimeField(auto_now_add=True)
     image = models.ImageField()
 
