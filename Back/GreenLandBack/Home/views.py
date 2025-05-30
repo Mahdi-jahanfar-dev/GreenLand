@@ -66,12 +66,15 @@ class AddUserToGreenLand(viewsets.ViewSet):
         if request.user == greenland.owner:
             serializer = SetRoleSerializer(data = request.data)
             serializer.is_valid(raise_exception=True)
-            if serializer.validated_data['user'].allow_users_add_greenlands == True:
-                serializer.validated_data['greenland'] = greenland
-                serializer.save()
-                return Response('created', status=status.HTTP_201_CREATED)
+            if SetRole.objects.filter(user=serializer.validated_data['user'], greenland=greenland).exists:
+                return Response({'error': 'this user is already exists'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'error': 'you cant add this user'}, status=status.HTTP_400_BAD_REQUEST)
+                if serializer.validated_data['user'].allow_users_add_greenlands == True:
+                    serializer.validated_data['greenland'] = greenland
+                    serializer.save()
+                    return Response('created', status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'error': 'you cant add this user'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
 

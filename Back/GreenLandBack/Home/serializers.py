@@ -28,8 +28,15 @@ class GreenlandSerializer(serializers.ModelSerializer):
 
 
 class SetRoleSerializer(serializers.ModelSerializer):
-
+    user = serializers.SerializerMethodField()
+    greenland = serializers.SerializerMethodField()
     class Meta:
         model = SetRole
         fields = ['user', 'greenland', 'role']
         read_only_fields = ['greenland',]
+
+    def get_user(self,obj):
+        return obj.user.username
+    
+    def get_greenland(self,obj):
+        return obj.greenland.name
