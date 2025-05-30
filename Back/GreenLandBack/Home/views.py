@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from Account.models import CustomUser
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 
@@ -33,9 +34,12 @@ class GreenLandRetriveViewset(viewsets.ViewSet):
             greenland = GreenLand.objects.get(id = id)
         except:
             return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = self.serializer_class(greenland)
-        return Response(serializer.data)
+        if greenland.owner == request.user:
+            serializer = self.serializer_class(greenland)
+            return Response(serializer.data)
+        else:
+            return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+    
 
 
 
@@ -66,12 +70,11 @@ class AddUserToGreenLand(viewsets.ViewSet):
         if request.user == greenland.owner:
             serializer = SetRoleSerializer(data = request.data)
             serializer.is_valid(raise_exception=True)
-            if SetRole.objects.filter(user=serializer.validated_data['user'], greenland=greenland).exists:
+            if SetRole.objects.filter(user=serializer.validated_data['user'], greenland=greenland).exists():
                 return Response({'error': 'this user is already exists'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                if serializer.validated_data['user'].allow_users_add_greenlands == True:
-                    serializer.validated_data['greenland'] = greenland
-                    serializer.save()
+                if serializer.validated_data['user'].allow_users_add_greenlands:
+                    serializer.save(greenland = greenland)
                     return Response('created', status=status.HTTP_201_CREATED)
                 else:
                     return Response({'error': 'you cant add this user'}, status=status.HTTP_400_BAD_REQUEST)
@@ -79,16 +82,49 @@ class AddUserToGreenLand(viewsets.ViewSet):
             return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class ZonesViewSet(viewsets.ViewSet):
-    queryset = Zone.objects.all()
-    serializer_class = ZoneSerializer
+class ZonesCreateViewSet(viewsets.ViewSet):
 
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data)
+    serializer_class = ZoneSerializer
     
     def create(self, request):
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        if serializer.validated_data['greenland'].owner == request.user:
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'erro': 'your not owner of this greenland'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ZonesDestroyViewset(viewsets.ViewSet):
+        
+        
+        def destroy(self, request, id, pk):
+            try:
+                greenland = GreenLand.objects.get(id = id)
+            except GreenLand.DoesNotExist:
+                return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            is_owner = greenland.owner == request.user
+            has_permission = False
+
+            if not is_owner:
+                try:
+                    role = SetRole.objects.get(user = request.user, greenland = greenland)
+                    if role.role == 'read_and_write':
+                        has_permission = True
+                except SetRole.DoesNotExist:
+                    return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            if not (is_owner or has_permission):
+                    return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+            try:
+                zone = Zone.objects.get(id = pk)
+            except Zone.DoesNotExist:
+                return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            if zone.greenland == greenland:
+                zone.delete()
+                return Response({'detail': 'deleted'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'detail': 'you cant delete this zone'}, status=status.HTTP_400_BAD_REQUEST)

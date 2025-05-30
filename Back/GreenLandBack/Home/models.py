@@ -16,6 +16,9 @@ class SetRole(models.Model):
     greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE)
     role = models.CharField(choices=UserRole.choices)
 
+    def __str__(self):
+        return f'{self.user} - {self.role} - {self.greenland}'
+
 class Zone(models.Model):
     greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE, related_name='zones')
     name = models.CharField(max_length=200)
