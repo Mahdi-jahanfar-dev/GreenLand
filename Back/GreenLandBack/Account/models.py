@@ -40,11 +40,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=25, unique=True)
     full_name = models.CharField(max_length=100,)
     email = models.EmailField(unique=True)
-    is_staff = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     allow_users_add_greenlands = models.BooleanField(default=True)
 
-    manager = CustomUserManager()
+    objects = CustomUserManager()
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["full_name", "email"]
