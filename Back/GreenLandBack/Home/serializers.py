@@ -17,6 +17,7 @@ class ZoneSerializer(serializers.ModelSerializer):
                   'smoke',
                   'lastUpdate',
                   'image']
+        read_only_fields = ['temperature', 'humidity', 'solidMoisture']
         
 
 class GreenlandSerializer(serializers.ModelSerializer):
