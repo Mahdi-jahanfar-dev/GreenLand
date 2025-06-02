@@ -14,7 +14,6 @@ urlpatterns = [
     path('greenlands/', views.GreenLandViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('greenland/<int:id>/', views.GreenLandRetriveViewset.as_view({'get': 'retrieve', 'post': 'create'})),
     path('greenland/set-role/<int:id>/', views.AddUserToGreenLand.as_view({'get': 'list', 'post': 'create'})),
-    path('weather/', views.test_weather_api, name='weather')
 ]
 
 urlpatterns += router.urls

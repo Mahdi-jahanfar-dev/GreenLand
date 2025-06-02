@@ -33,6 +33,8 @@ def weather_api_request_sender():
     
 
     current_data = {
+        "latitude": latitude,
+        "longitude" : longitude,
         "temperature": int(current_1.Variables(0).Value()),
         "humidity": int(current_1.Variables(1).Value()),
         "solidMoisture": int(current_2.Variables(0).Value()),

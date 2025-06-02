@@ -30,6 +30,8 @@ class Zone(models.Model):
     smoke = models.CharField(choices=ZoneStatus)
     lastUpdate = models.DateTimeField(auto_now_add=True)
     image = models.ImageField()
+    latitude = models.IntegerField(null=True, blank=True)
+    longitude = models.IntegerField(null=True, blank=True)
 
 
     def __str__(self):

@@ -16,16 +16,18 @@ class ZoneSerializer(serializers.ModelSerializer):
                   'solidMoisture',
                   'smoke',
                   'lastUpdate',
-                  'image']
-        read_only_fields = ['temperature', 'humidity', 'solidMoisture']
+                  'image',
+                  'longitude',
+                  'latitude',
+                  ]
+        read_only_fields = ['temperature', 'humidity', 'solidMoisture', 'longitude', 'latitude']
         
 
 class GreenlandSerializer(serializers.ModelSerializer):
-    zones = ZoneSerializer(many = True)
-
     class Meta:
         model = GreenLand
-        fields = ['id','name', 'owner','zones']
+        fields = ['id','name', 'owner']
+        read_only_fields = ['owner']
 
 
 class SetRoleSerializer(serializers.ModelSerializer):
