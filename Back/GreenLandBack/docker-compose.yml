@@ -52,5 +52,18 @@ services:
       - backend
 
 
+  celery_beat:
+    container_name: backend_celery_beat
+    build: .
+    command: ["celery", "-A", "GreenLandBack.celery_app", "beat", "--loglevel=info", "--schedule=/app/celerybeat_data/celerybeat-schedule"]
+    volumes:
+      - .:/app
+      - celerybeat_data:/app/celerybeat_data
+    depends_on:
+      - redis
+      - backend
+
+
 volumes:
   postgres_data:
+  celerybeat_data:

@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from random import randint
 
 
-def weather_api_request_sender():
+def weather_api_request_sender(latitude = None, longitude = None):
 
     om = openmeteo_requests.Client()
 
-    latitude = randint(10, 70)
-    longitude = randint(10, 70)
+    if latitude == None and longitude == None:
+            latitude = randint(10, 70)
+            longitude = randint(10, 70)
 
     params_1 = {
         "latitude": latitude,
@@ -33,6 +34,8 @@ def weather_api_request_sender():
     
 
     current_data = {
+        "latitude": latitude,
+        "longitude" : longitude,
         "temperature": int(current_1.Variables(0).Value()),
         "humidity": int(current_1.Variables(1).Value()),
         "solidMoisture": int(current_2.Variables(0).Value()),

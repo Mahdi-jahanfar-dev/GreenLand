@@ -30,6 +30,7 @@ class GreenLandViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.save(owner = request.user)
         return Response(serializer.data)
 
 class GreenLandRetriveViewset(viewsets.ViewSet):
@@ -98,7 +99,12 @@ class ZonesCreateViewSet(viewsets.ViewSet):
         if serializer.validated_data['greenland'].owner == request.user:
             response = weather_api_request_sender()
             data = response.data['current']
-            serializer.save(temperature = data['temperature'], humidity = data['humidity'], solidMoisture = data['solidMoisture'])
+            serializer.save(temperature = data['temperature'],
+                            humidity = data['humidity'],
+                            solidMoisture = data['solidMoisture'],
+                            latitude = data['latitude'],
+                            longitude = data['longitude'],
+                            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({'erro': 'your not owner of this greenland'}, status=status.HTTP_400_BAD_REQUEST)
@@ -136,42 +142,3 @@ class ZonesDestroyViewset(viewsets.ViewSet):
                 return Response({'detail': 'deleted'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'you cant delete this zone'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def test_weather_api(request):
-    om = openmeteo_requests.Client()
-    latitude = randint(10, 70)
-    longitude = randint(10, 70)
-    params_1 = {
-        "latitude": latitude,
-        "longitude": longitude,
-        "current": ["temperature_2m", "relative_humidity_2m"]
-    }
-    params_2 = {
-        "latitude": latitude,
-        "longitude": longitude,
-        "current": ["pm2_5", "pm10", "european_aqi"]
-    }
-
-
-    responses_1 = om.weather_api("https://api.open-meteo.com/v1/forecast", params=params_1)
-    response_1 = responses_1[0]
-    current_1 = response_1.Current()
-
-    responses_2 = om.weather_api("https://air-quality-api.open-meteo.com/v1/air-quality", params=params_2)
-    response_2 = responses_2[0]
-    current_2 = response_2.Current()
-    
-
-    current_data = {
-        "temperature": int(current_1.Variables(0).Value()),
-        "humidity": int(current_1.Variables(1).Value()),
-        "solidMoisture": int(current_2.Variables(0).Value()),
-        "smoke": int(current_2.Variables(1).Value()),
-
-    }
-
-    return Response({
-        "current": current_data
-    })
