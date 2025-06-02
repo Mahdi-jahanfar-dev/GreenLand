@@ -41,6 +41,15 @@ services:
     ports:
       - "6379:6379"
 
+  celery:
+    container_name: backend_celery
+    build: .
+    command: ["celery", "-A", "GreenLandBack.celery_app", "worker", "--loglevel=info"]
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - backend
 
 
 volumes:
