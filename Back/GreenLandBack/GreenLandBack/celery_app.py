@@ -1,6 +1,6 @@
 import os
 from celery import Celery
-from celery.schedules import crontab
+from celery.schedules import crontab, schedule
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GreenLandBack.settings')
@@ -13,7 +13,7 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'refresh-zone-data-every-10-seconds': {
+    'refresh-zone-data-every-1-day': {
         'task': 'Home.tasks.refresh_data',
         'schedule': crontab(minute=0),
         # 'args': (), # if you have args use this
