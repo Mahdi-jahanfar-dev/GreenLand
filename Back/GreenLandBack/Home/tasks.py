@@ -1,6 +1,7 @@
 from GreenLandBack.celery_app import app
 from .models import Zone, ZoneUpdate
 from .weather_request_api import weather_api_request_sender
+from datetime import datetime, timedelta
 
 
 @app.task()
@@ -20,3 +21,13 @@ def refresh_data():
         zone.humidity = data['humidity']
         zone.solidMoisture = data['solidMoisture']
         zone.save()
+
+
+@app.task()
+def cheking_zone_updated_data():
+    zone_updates = ZoneUpdate.objects.all()
+    now = datetime.now()
+    seven_days_ago = now - timedelta(days=7)
+    for item in zone_updates:
+        if item.time == seven_days_ago:
+            item.delete()

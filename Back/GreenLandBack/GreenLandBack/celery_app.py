@@ -18,4 +18,9 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute=0),
         # 'args': (), # if you have args use this
     },
+    
+    'checking-updated-zone-data':{
+        'task': 'Home.tasks.cheking_zone_updated_data',
+        'schedule': crontab(minute=0),
+    },
 }
