@@ -2,6 +2,9 @@ from GreenLandBack.celery_app import app
 from .models import Zone, ZoneUpdate
 from .weather_request_api import weather_api_request_sender
 from datetime import datetime, timedelta
+from channels.layers import get_channel_layer
+import asyncio
+import json
 
 
 @app.task()
@@ -17,10 +20,28 @@ def refresh_data():
                                       temperature=data['temperature'],
                                       humidity=data['humidity'], solidMoisture=data['solidMoisture']
                                       )
+            changed = True
         zone.temperature = data['temperature']
         zone.humidity = data['humidity']
         zone.solidMoisture = data['solidMoisture']
         zone.save()
+
+        if changed:
+            channel_layer = get_channel_layer()
+            group_name = f'greenland_{Zone.greenland.id}'
+            async def sent_update_to_websocket():
+                await channel_layer.group_send(
+                        group_name,
+                        {
+                            'type': 'send_update',
+                            'message': json.dumps({
+                                "temperature": data['temperature'],
+                                "humidity": data['humidity'],
+                                "solidMoisture": data['solidMoisture'],
+                            })
+                        }
+                        )
+            asyncio.run(sent_update_to_websocket())
 
 
 @app.task()
