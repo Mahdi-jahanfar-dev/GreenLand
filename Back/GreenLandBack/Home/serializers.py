@@ -20,6 +20,11 @@ class ZoneSerializer(serializers.ModelSerializer):
                   'longitude',
                   'latitude',
                   ]
+        extra_kwargs = {
+            "greenland": {"help_text": "greenland id (required)"},
+            "name": {"help_text": "greenland name (string, required)"}
+
+        }
         read_only_fields = ['temperature', 'humidity', 'solidMoisture', 'longitude', 'latitude']
         
 
