@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
 import os
 
@@ -21,17 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9)4rn^9^yg*%e70y#j)w21c$#&-bs*_$yf_zy+kd@+53n$_7@0'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'Home',
     'Account',
     'django_celery_beat',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -72,7 +74,19 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'GreenLandBack.wsgi.application'
+ASGI_APPLICATION = 'GreenLandBack.asgi.application'
+
+
+# channel
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [config('CHANNELS_LAYER_REDIS')],
+        },
+    },
+}
+
 
 
 # Database
@@ -85,7 +99,6 @@ WSGI_APPLICATION = 'GreenLandBack.wsgi.application'
 #     }
 # }
 
-from decouple import config
 
 DATABASES = {
     'default': {
