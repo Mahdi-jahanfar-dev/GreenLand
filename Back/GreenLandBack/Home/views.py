@@ -12,7 +12,8 @@ import openmeteo_requests
 from openmeteo_sdk.Variable import Variable
 from random import randint
 from .weather_request_api import weather_api_request_sender
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -27,6 +28,7 @@ class GreenLandViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(green_lands, many = True)
         return Response(serializer.data)
     
+    @swagger_auto_schema(request_body=GreenlandSerializer)
     def create(self, request):
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -69,6 +71,25 @@ class AddUserToGreenLand(viewsets.ViewSet):
         else:
             return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
         
+    @swagger_auto_schema(
+        request_body=SetRoleSerializer,
+        responses={
+            201: SetRoleSerializer,
+            400: openapi.Response('Bad Request', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error message')
+                }
+            )),
+            404: openapi.Response('Not Found', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error message')
+                }
+            ))
+        },
+        operation_description="adding user to greenland"
+    )
     def create(self, request, id):
         try:
             greenland = GreenLand.objects.get(id = id)
@@ -93,6 +114,20 @@ class ZonesCreateViewSet(viewsets.ViewSet):
 
     serializer_class = ZoneSerializer
     
+    
+    @swagger_auto_schema(
+        request_body=ZoneSerializer,
+        responses={
+            201: ZoneSerializer,
+            400: openapi.Response('Bad Request', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'error': openapi.Schema(type=openapi.TYPE_STRING, description='Error message')
+                }
+            ))
+        },
+        operation_description="creating new zone in greenland"
+    )
     def create(self, request):
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
@@ -113,10 +148,11 @@ class ZonesCreateViewSet(viewsets.ViewSet):
 class ZonesDestroyViewset(viewsets.ViewSet):
         
         
-        def destroy(self, request, id, pk):
+        def destroy(self, request, id):
             try:
-                greenland = GreenLand.objects.get(id = id)
-            except GreenLand.DoesNotExist:
+                zone = Zone.objects.get(id = id)
+                greenland = zone.greenland
+            except Zone.DoesNotExist:
                 return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
             
             is_owner = greenland.owner == request.user
@@ -132,13 +168,7 @@ class ZonesDestroyViewset(viewsets.ViewSet):
 
             if not (is_owner or has_permission):
                     return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
-            try:
-                zone = Zone.objects.get(id = pk)
-            except Zone.DoesNotExist:
-                return Response({'detail': 'not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            if zone.greenland == greenland:
-                zone.delete()
-                return Response({'detail': 'deleted'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'detail': 'you cant delete this zone'}, status=status.HTTP_400_BAD_REQUEST)
+            zone.delete()
+            return Response({'detail': 'deleted'}, status=status.HTTP_200_OK)
+    

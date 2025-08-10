@@ -14,8 +14,10 @@ django-celery-beat==2.8.1
 django-timezone-field==7.1
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
+drf-yasg==1.21.10
 flatbuffers==25.2.10
 h11==0.16.0
+inflection==0.5.1
 jh2==5.0.9
 kombu==5.5.4
 niquests==3.14.1
@@ -29,12 +31,15 @@ PyJWT==2.9.0
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 python-decouple==3.8
+pytz==2025.2
+PyYAML==6.0.2
 qh3==1.5.1
 redis==6.2.0
 six==1.17.0
 sqlparse==0.5.3
 typing==3.7.4.3
 tzdata==2025.2
+uritemplate==4.2.0
 urllib3-future==2.12.922
 vine==5.1.0
 wassima==1.2.2
