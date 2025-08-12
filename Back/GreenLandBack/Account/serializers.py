@@ -22,17 +22,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['username', 'full_name', 'email', 'password', 'password_2']
         
-        def validate(self, data):
-            if data['password'] != data['password_2']:
-                raise serializers.ValidationError({"password_confirmation": "Passwords do not match."})
-            return data
+    def validate(self, data):
+        if data['password'] != data['password_2']:
+            raise serializers.ValidationError({"password_confirmation": "Passwords do not match."})
+        return data
         
-        def create(self, validated_data):
-            validated_data.pop('password_2')
-            user = self.model.create_user(
-                username = validated_data['username'],
-                full_name = validated_data['full_name'],
-                email = validated_data['email'],
-                password = validated_data['password']
-            )
-            return user
+    def create(self, validated_data):
+        validated_data.pop('password_2')
+        user = CustomUser.objects.create_user(
+            username = validated_data['username'],
+            full_name = validated_data['full_name'],
+            email = validated_data['email'],
+            password = validated_data['password']
+        )
+        return user
