@@ -10,6 +10,11 @@ This project is designed to support real-world greenhouse scenarios by allowing 
 * **User Registration & Authentication**
 
   * Each user can sign up and manage their own greenhouses.
+  * Uses a **Custom User model** (`CustomUser`) for authentication and user management.
+  * Supports **JWT Authentication**:
+    * Users can log in via an API endpoint.
+    * On successful login, the system generates **access** and **refresh JWT tokens**.
+    * Tokens are used for authenticated requests to protected endpoints.
 
 * **Greenhouse Ownership**
 
@@ -20,6 +25,7 @@ This project is designed to support real-world greenhouse scenarios by allowing 
 
   * Greenhouses can be divided into multiple *zones* (e.g., temperature zones).
   * Each zone holds real-time environmental data (temperature, humidity, smoke, etc).
+  * **Real-time updates via WebSocket** for zone data streaming.
 
 * **Advanced Permission System**
 
@@ -53,41 +59,65 @@ This project is designed to support real-world greenhouse scenarios by allowing 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+git clone https://github.com/Mahdi-jahanfar-dev/GreenLand.git
+cd GreenLand
 ```
-
-### 2. Create `.env` file
-
-Create a `.env` file in the root directory and define your environment variables:
-
-```env
+### 2. Create .env File
+```bash
 POSTGRES_DB=your_db_name
 POSTGRES_USER=your_user
 POSTGRES_PASSWORD=your_password
 ```
-
-### 3. Run with Docker Compose
-
+### 3. Run With Docker Compose
 ```bash
-docker-compose up --build
+sudo docker-compose up --build
 ```
 
-This will spin up the following services:
+## 🔐 JWT Authentication Example
+### A simple login API using Django REST Framework and SimpleJWT:
+### Serializer
+```
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+        
+    def validate(self, data):
+        
+        user = authenticate(
+            username = data.get("username"),
+            password = data.get("password")
+        )
+        
+        if not user:
+            raise serializers.ValidationError("username or password wrong")
+        
+        data["user"] = user
+        return data
+```
+### views
+```
+class UserLoginVIew(APIView):
+    
+    serializer_class = UserLoginSerializer
 
-* `backend`: Django application (port 8000)
-* `postgres_db`: PostgreSQL database (port 5432)
-* `backend_redis`: Redis broker (port 6379)
-* `backend_celery`: Celery worker
-* `backend_celery_beat`: Celery scheduler for periodic tasks
-
----
+    def post(self, request):
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        
+        refresh_token = RefreshToken.for_user(user)
+        
+        return Response ({
+            "user": user.username,
+            "access_token": str(refresh_token.access_token),
+            "refresh_token": str(refresh_token),
+            },
+            status=status.HTTP_200_OK
+        )
+```
 
 ## 📌 Future Enhancements
-
 * WebSocket-based real-time frontend updates
 * Sensor integration for real hardware communication
 * Graphical dashboard for zone statistics
 * Alerts and automation triggers (e.g., if temperature too high)
-
----
