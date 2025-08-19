@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 ...
 
@@ -43,4 +45,14 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
+    
+    # we creating access token and refresh token directly in login view but you can replace this way to get access token
+    # path("token/",
+    #      TokenObtainPairView.as_view(),
+    #      name = "token-view"
+    # ),
+    path("token/refresh/",
+         TokenRefreshView.as_view(),
+         name = "token-refresh-view"
+    )    
 ]
