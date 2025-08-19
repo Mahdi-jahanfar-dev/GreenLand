@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import CustomUser
 from Home.serializers import GreenlandSerializer, SetRoleSerializer
+from django.contrib.auth import authenticate
+
 
 
 
@@ -14,7 +16,7 @@ class ProfileSerilizer(serializers.ModelSerializer):
         
         
         
-class UserSerializer(serializers.ModelSerializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length = 20, required = True, write_only = True, min_length = 8)
     password_2 = serializers.CharField(max_length = 20, required = True, write_only = True, min_length = 8)
     
@@ -36,3 +38,20 @@ class UserSerializer(serializers.ModelSerializer):
             password = validated_data['password']
         )
         return user
+
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+        
+    def validate(self, data):
+        
+        user = authenticate(
+            username = data.get("username"),
+            password = data.get("password")
+        )
+        
+        if not user:
+            raise serializers.ValidationError("username or password wrong")
+        
+        data["user"] = user
+        return data
