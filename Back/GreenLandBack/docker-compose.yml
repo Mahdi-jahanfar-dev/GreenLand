@@ -1,5 +1,5 @@
 services:
-
+  # app container
   backend:
     container_name: backend
     build: .
@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
 
-  
+  # db container
   db:
     container_name: postgres_db
     image: postgres:15
@@ -33,13 +33,14 @@ services:
     ports:
       - "5432:5432"
 
-
+  # redis container
   redis:
     container_name: backend_redis
     image: redis
     ports:
       - "6379:6379"
 
+  # celery container
   celery:
     container_name: backend_celery
     build: .
@@ -50,7 +51,7 @@ services:
       - redis
       - backend
 
-
+  # celery beat container
   celery_beat:
     container_name: backend_celery_beat
     build: .

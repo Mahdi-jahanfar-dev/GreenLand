@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
 
 
-
+# user registration view
 class UserRegisterView(APIView):
     
     model = CustomUser
@@ -25,6 +25,7 @@ class UserRegisterView(APIView):
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# user login view
 class UserLoginVIew(APIView):
     
     serializer_class = UserLoginSerializer
@@ -47,6 +48,7 @@ class UserLoginVIew(APIView):
         
 
 
+# user profile view
 class UserProfile(APIView):
     model = CustomUser
     serializer_class = ProfileSerilizer

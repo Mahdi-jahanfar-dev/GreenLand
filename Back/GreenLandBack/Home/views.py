@@ -17,7 +17,7 @@ from drf_yasg import openapi
 
 
 
-
+# create and list greenland view
 class GreenLandViewSet(viewsets.ViewSet):
     serializer_class = GreenlandSerializer
     permission_classes = [IsAuthenticated]
@@ -35,6 +35,7 @@ class GreenLandViewSet(viewsets.ViewSet):
         serializer.save(owner = request.user)
         return Response(serializer.data)
 
+# retrive greenland view
 class GreenLandRetriveViewset(viewsets.ViewSet):
     serializer_class = GreenlandSerializer
 
@@ -53,7 +54,7 @@ class GreenLandRetriveViewset(viewsets.ViewSet):
 
 
 
-
+# add user to greenlnad view
 class AddUserToGreenLand(viewsets.ViewSet):
 
     serializer_class = SetRoleSerializer
@@ -110,6 +111,7 @@ class AddUserToGreenLand(viewsets.ViewSet):
             return Response({'404': 'not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+# zone creator view
 class ZonesCreateViewSet(viewsets.ViewSet):
 
     serializer_class = ZoneSerializer
@@ -145,6 +147,7 @@ class ZonesCreateViewSet(viewsets.ViewSet):
             return Response({'erro': 'your not owner of this greenland'}, status=status.HTTP_400_BAD_REQUEST)
         
 
+# delete zone view
 class ZonesDestroyViewset(viewsets.ViewSet):
         
         

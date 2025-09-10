@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 
 
 
-
+# profile serializer
 class ProfileSerilizer(serializers.ModelSerializer):
     green_land = GreenlandSerializer(many = True)
     role = SetRoleSerializer(many = True)
@@ -15,7 +15,7 @@ class ProfileSerilizer(serializers.ModelSerializer):
         read_only_fields = ['is_staff', 'is_superuser']
         
         
-        
+# user register serializer
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length = 20, required = True, write_only = True, min_length = 8)
     password_2 = serializers.CharField(max_length = 20, required = True, write_only = True, min_length = 8)

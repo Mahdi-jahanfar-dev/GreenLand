@@ -7,6 +7,8 @@ import asyncio
 import json
 
 
+
+# Celery task for refreshing data at a specified interval
 @app.task()
 def refresh_data():
     zones = Zone.objects.all()
@@ -44,6 +46,7 @@ def refresh_data():
             asyncio.run(sent_update_to_websocket())
 
 
+# If data is older than 7 days, it will be deleted
 @app.task()
 def cheking_zone_updated_data():
     zone_updates = ZoneUpdate.objects.all()

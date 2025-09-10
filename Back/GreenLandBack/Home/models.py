@@ -3,7 +3,7 @@ from .choices import ZoneStatus, UserRole
 from Account.models import CustomUser
 
 
-
+# model for greenland
 class GreenLand(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(CustomUser,on_delete=models.CASCADE ,related_name='green_land')
@@ -11,6 +11,7 @@ class GreenLand(models.Model):
     def __str__(self):
         return self.name
 
+# model for user role
 class SetRole(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='role')
     greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE)
@@ -19,6 +20,7 @@ class SetRole(models.Model):
     def __str__(self):
         return f'{self.user} - {self.role} - {self.greenland}'
 
+# model for zone
 class Zone(models.Model):
     greenland = models.ForeignKey(GreenLand, on_delete=models.CASCADE, related_name='zones')
     name = models.CharField(max_length=200)
@@ -37,6 +39,7 @@ class Zone(models.Model):
     def __str__(self):
         return self.name
     
+# model for every updates in zones
 class ZoneUpdate(models.Model):
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
     temperature = models.IntegerField()
