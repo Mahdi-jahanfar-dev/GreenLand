@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Zone, GreenLand, SetRole
 
 
-
+# serializer for zones of greenland
 class ZoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zone
@@ -28,6 +28,7 @@ class ZoneSerializer(serializers.ModelSerializer):
         read_only_fields = ['temperature', 'humidity', 'solidMoisture', 'longitude', 'latitude']
         
 
+# serializer for greenland
 class GreenlandSerializer(serializers.ModelSerializer):
     class Meta:
         model = GreenLand
@@ -35,6 +36,7 @@ class GreenlandSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner']
 
 
+# serializer for setting role of user in green land
 class SetRoleSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     greenland = serializers.SerializerMethodField()

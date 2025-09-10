@@ -7,7 +7,7 @@ router = DefaultRouter()
 
 
 
-
+# project home app urls
 urlpatterns = [
     path('zones/', views.ZonesCreateViewSet.as_view({'post': 'create'})),
     path('zones/<int:id>/', views.ZonesDestroyViewset.as_view({'delete': 'destroy'})),
