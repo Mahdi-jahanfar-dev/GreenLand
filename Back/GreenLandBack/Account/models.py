@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.exceptions import ValidationError
 
 
-
+# custom user manager for custom user model
 class CustomUserManager(BaseUserManager):
 
     def create_user(self, username, email, password=None, **extra_fields):
@@ -35,7 +35,7 @@ class CustomUserManager(BaseUserManager):
         return user
     
 
-
+# custom user model
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=25, unique=True)
     full_name = models.CharField(max_length=100,)

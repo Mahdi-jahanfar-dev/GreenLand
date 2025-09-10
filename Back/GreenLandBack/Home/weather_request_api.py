@@ -3,7 +3,7 @@ from openmeteo_sdk.Variable import Variable
 from rest_framework.response import Response
 from random import randint
 
-
+# def for requesting to weather endpoints
 def weather_api_request_sender(latitude = None, longitude = None):
 
     om = openmeteo_requests.Client()
