@@ -109,6 +109,11 @@ DATABASES = {
         'PASSWORD': config('POSTGRES_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT', '5432'),
+        'TEST': {
+            "NAME": config("TEST_DATABASE_NAME"),
+            'TEMPLATE': 'template0',
+
+        }
     }
 }
 
