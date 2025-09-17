@@ -2,6 +2,8 @@ import openmeteo_requests
 from openmeteo_sdk.Variable import Variable
 from rest_framework.response import Response
 from random import randint
+from rest_framework import status
+
 
 # def for requesting to weather endpoints
 def weather_api_request_sender(latitude = None, longitude = None):
@@ -44,5 +46,6 @@ def weather_api_request_sender(latitude = None, longitude = None):
     }
 
     return Response({
-        "current": current_data
-    })
+        "current": current_data,
+        },
+    )
